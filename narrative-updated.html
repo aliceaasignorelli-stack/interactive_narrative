@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narrative</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Courier+Prime&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0a;
+    --text: #d4d0c8;
+    --dim: #5a5650;
+    --accent: #8a7a6a;
+    --border: #2a2520;
+    --choice-bg: #0f0e0c;
+    --choice-hover: #1a1815;
+    --choice-border: #3a3530;
+    --choice-hover-border: #6a6058;
+    --object-text: #7a6a5a;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier Prime', monospace;
+    overflow: hidden;
+  }
+
+  #app {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .scene {
+    max-width: 600px;
+    width: 100%;
+    opacity: 0;
+    animation: fadeIn 1.2s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-8px); }
+  }
+
+  .scene.leaving {
+    animation: fadeOut 0.5s ease forwards;
+  }
+
+  .path-indicator {
+    display: none;
+  }
+
+  .narrative-text {
+    font-family: 'IM Fell English', serif;
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: var(--text);
+    margin-bottom: 2.8rem;
+    min-height: 4rem;
+  }
+
+  .media-container {
+    margin-bottom: 2.5rem;
+    width: 100%;
+  }
+
+  .media-container img,
+  .media-container video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid var(--border);
+  }
+
+  .media-container video {
+    background: #000;
+  }
+
+  .divider {
+    width: 1px;
+    height: 2rem;
+    background: var(--border);
+    margin: 0 auto 2rem;
+  }
+
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .choice-option {
+    background: var(--choice-bg);
+    border: 1px solid var(--choice-border);
+    padding: 1.2rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .choice-option:hover {
+    background: var(--choice-hover);
+    border-color: var(--choice-hover-border);
+  }
+
+  .choice-question {
+    font-family: 'IM Fell English', serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .choice-object {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--object-text);
+    text-transform: lowercase;
+  }
+
+  .single-action {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .continue-btn {
+    background: none;
+    border: none;
+    color: var(--dim);
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .continue-btn:hover {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  /* grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.4;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="scene" id="scene"></div>
+</div>
+
+<script>
+const nodes = {
+
+  // ── START ──────────────────────────────────────────────────────────────────
+  start: {
+    path: '',
+    text: `You wake up in your bedroom. Everything seems calm, ordinary. But something is not quite right. You are not sure if it is day or night.`,
+    media: { type: 'video', src: 'iCloud\Drive/candidacy/bedroom01.mp4' },
+    choices: [
+      { question: 'Do you want to look outside?', object: 'glass', next: 'look_outside' },
+      { question: 'Do you want to look at the time?', object: 'clock', next: 'look_at_time' }
+    ]
+  },
+
+  // ── BRANCH A: LOOK OUTSIDE ─────────────────────────────────────────────────
+  look_outside: {
+    path: '',
+    text: `You are blinded by the light from outside but cannot understand if it is the sun or a street lamp. Anyways, you should start your day. You always start your day the same way but now you can't remember what comes first.`,
+    media: { type: 'video', src: 'iCloud\Drive/candidacy/bedroom02.mp4' },
+    choices: [
+      { question: 'Do you go to the bathroom?', object: 'hand soap', next: 'bathroom_enter' },
+      { question: 'Do you go to the kitchen?', object: 'birthday cake', next: 'kitchen_enter' }
+    ]
+  },
+
+  // ── PATH: SMELL (bathroom) ─────────────────────────────────────────────────
+  bathroom_enter: {
+    path: 'smell',
+    text: `You turn on the faucet. Water runs. You cup your hands under it, bring it to your face. But when you lean down, you smell something. It smells like meat left out in summer heat.`,
+    choices: [
+      { question: 'Search for the smell', object: 'hand soap', next: 'smell_search' },
+      { question: 'Ignore it', object: 'wait', next: 'smell_ignore' }
+    ]
+  },
+
+  smell_search: {
+    path: 'smell',
+    text: `You bring your hands to your nose. The smell intensifies. You bring your wrists closer, then your arms. It's coming from you. From your skin. It's getting stronger. You can't take it. You need to get out. You need air.`,
+    choices: [
+      { question: 'Continue', object: null, next: 'hallway' }
+    ]
+  },
+
+  smell_ignore: {
+    path: 'smell',
+    text: `You try to focus on the water, on washing your face. But the smell won't leave. Without thinking, you bring your hands closer. Then your wrists. Your arms. It's coming from you. From your skin. You can't ignore it anymore. You need to get out. You need air.`,
+    choices: [
+      { question: 'Continue', object: null, next: 'hallway' }
+    ]
+  },
+
+  // ── PATH: TASTE (kitchen) ──────────────────────────────────────────────────
+  kitchen_enter: {
+    path: 'taste',
+    text: `You feel hungry. You open the fridge. Inside sits a birthday cake. The frosting is still perfectly smooth, bright, inviting. But for some reason you feel terribly nauseous.`,
+    media: { type: 'image', src: 'iCloud\Drive/candidacy/kitche_test02.png' },
+    choices: [
+      { question: 'Take a bite', object: 'birthday cake', next: 'taste_bite' },
+      { question: 'Close the fridge', object: 'wait', next: 'taste_close' }
+    ]
+  },
+
+  taste_bite: {
+    path: 'taste',
+    text: `You take a bite. The sweetness sends shivers down your spine. The taste feels familiar but unbearable. You have to spit it out. You need to get out. You need air.`,
+    media: { type: 'image', src: 'iCloud\Drive/candidacy/kitche_test02.png' },
+    choices: [
+      { question: 'Continue', object: null, next: 'hallway' }
+    ]
+  },
+
+  taste_close: {
+    path: 'taste',
+    text: `You're about to shut the door, but something pulls you back. Before you realize what's happening, the cake is in your hands. You're already biting into it. The sweetness sends shivers down your spine. The taste feels familiar but unbearable. You have to spit it out. You need to get out. You need air.`,
+    media: { type: 'image', src: 'iCloud\Drive/candidacy/kitche_test02.png' },
+    choices: [
+      { question: 'Continue', object: null, next: 'hallway' }
+    ]
+  },
+
+  // ── BRANCH B: LOOK AT TIME ─────────────────────────────────────────────────
+  look_at_time: {
+    path: '',
+    text: `You try to read the clock, but the time is indecipherable. The numbers are wrong. You go to the living room.`,
+    media: { type: 'video', src: 'iCloud\Drive/candidacy/bedroom_03.mp4' },
+    choices: [
+      { question: 'Do you sit down and watch TV?', object: 'tv remote', next: 'living_room_enter' },
+      { question: 'It has been a long time since you talked to anyone. Would you like to pick up the phone?', object: 'phone', next: 'phone_enter' }
+    ]
+  },
+
+  // ── PATH: SIGHT (TV) ──────────────────────────────────────────────────────
+  living_room_enter: {
+    path: 'sight',
+    text: `The images blur together. You can't make sense of what you're seeing. It makes you nauseous.`,
+    media: { type: 'image', src: 'iCloud\Drive/candidacy/livingroomtest2.png' },
+    choices: [
+      { question: 'Turn it off', object: 'tv remote', next: 'sight_off' },
+      { question: 'Leave it on', object: 'wait', next: 'sight_on' }
+    ]
+  },
+
+  sight_off: {
+    path: 'sight',
+    text: `You don't have the strength to turn it off, to take the remote. The apartment feels tiny. The images burn into your retina. You feel dizzy. You need to get out. You need air.`,
+    media: { type: 'image', src: 'iCloud\Drive/candidacy/livingroomtest3.png' },
+    choices: [
+      { question: 'Continue', object: null, next: 'hallway' }
+    ]
+  },
+
+  sight_on: {
+    path: 'sight',
+    text: `You try to keep watching, to make sense of the images, but they blur faster. The apartment feels tiny. The images burn into your retina. You feel dizzy. You need to get out. You need air.`,
+    media: { type: 'image', src: 'iCloud\Drive/candidacy/livingroomtest3.png' },
+    choices: [
+      { question: 'Continue', object: null, next: 'hallway' }
+    ]
+  },
+
+  // ── PATH: HEARING (phone) ─────────────────────────────────────────────────
+  phone_enter: {
+    path: 'hearing',
+    text: `You only hear muffled sounds. Was there someone on the other side?`,
+     media: { type: 'image', src: 'iCloud\Drive/candidacy/livingroomtest2.png' },
+    choices: [
+      { question: 'Try to understand', object: 'phone', next: 'hearing_listen' },
+      { question: 'Hang up', object: 'wait', next: 'hearing_hangup' }
+    ]
+  },
+
+  hearing_listen: {
+    path: 'hearing',
+    text: `You press the phone closer. The voice is clearly distorted. You're not even sure you're talking to someone on the other line. The sounds blur into static. You feel dizzy. You need to get out. You need air.`,
+    choices: [
+      { question: 'Continue', object: null, next: 'hallway' }
+    ]
+  },
+
+  hearing_hangup: {
+    path: 'hearing',
+    text: `You try to hang up. You can't. Your hand stays frozen. The voice continues, echoing in your skull. Movements are harder now. Everything feels slow. The voice won't stop. You feel dizzy. You need to get out. You need air.`,
+    choices: [
+      { question: 'Continue', object: null, next: 'hallway' }
+    ]
+  },
+
+  // ── CONVERGENCE ───────────────────────────────────────────────────────────
+  hallway: {
+    path: '',
+    text: `You walk toward the hallway. The front door is right there. You need to get out. You have to leave.`,
+    media: null,
+    choices: [
+      { question: 'Open the door', object: null, next: 'door' },
+      { question: 'Open the door', object: null, next: 'door' }
+    ]
+  },
+
+  door: {
+    path: '',
+    text: `You open the door.`,
+    choices: [
+      { question: 'Begin again', object: null, next: 'start' }
+    ]
+  }
+};
+
+// ── RENDERER ──────────────────────────────────────────────────────────────────
+
+const pathLabels = {
+  smell:   'smell',
+  taste:   'taste',
+  sight:   'sight',
+  hearing: 'hearing',
+};
+
+let current = 'start';
+
+function render(nodeId, instant = false) {
+  const node = nodes[nodeId];
+  const sceneEl = document.getElementById('scene');
+
+  const doRender = () => {
+    const pathLabel = node.path ? pathLabels[node.path] || '' : '';
+
+    // Media rendering
+    let mediaHTML = '';
+    if (node.media) {
+      if (node.media.type === 'image') {
+        mediaHTML = `<div class="media-container"><img src="${node.media.src}" alt=""></div>`;
+      } else if (node.media.type === 'video') {
+        mediaHTML = `<div class="media-container"><video autoplay loop muted playsinline><source src="${node.media.src}" type="video/mp4"></video></div>`;
+      }
+    }
+
+    let choicesHTML;
+    
+    // Single "continue" or "begin again" button
+    if (node.choices.length === 1 && !node.choices[0].object) {
+      choicesHTML = `<div class="single-action"><button class="continue-btn" data-next="${node.choices[0].next}">${node.choices[0].question.toLowerCase()}</button></div>`;
+    } 
+    // Regular choices with objects
+    else {
+      choicesHTML = `<div class="choices">${node.choices.map(c => `
+        <div class="choice-option" data-next="${c.next}">
+          <div class="choice-question">${c.question}</div>
+          ${c.object ? `<div class="choice-object">use the ${c.object}</div>` : ''}
+        </div>
+      `).join('')}</div>`;
+    }
+
+    sceneEl.innerHTML = `
+      <div class="path-indicator">${pathLabel}</div>
+      <div class="divider"></div>
+      <p class="narrative-text">${node.text}</p>
+      ${mediaHTML}
+      ${choicesHTML}
+    `;
+
+    sceneEl.style.animation = 'none';
+    sceneEl.offsetHeight; // reflow
+    sceneEl.style.animation = '';
+    sceneEl.classList.remove('leaving');
+
+    sceneEl.querySelectorAll('[data-next]').forEach(btn => {
+      btn.addEventListener('click', () => navigate(btn.dataset.next));
+    });
+  };
+
+  if (instant) {
+    doRender();
+  } else {
+    sceneEl.classList.add('leaving');
+    setTimeout(() => { doRender(); }, 520);
+  }
+}
+
+function navigate(nextId) {
+  current = nextId;
+  render(nextId);
+}
+
+render('start', true);
+</script>
+</body>
+</html>
