@@ -190,7 +190,7 @@ const nodes = {
   look_outside: {
     path: '',
     text: `You are blinded by the light from outside but cannot understand if it is the sun or a street lamp. Anyways, you should start your day. You always start your day the same way but now you can't remember what comes first.`,
-    media: { type: 'video', src: 'iCloud\Drive/candidacy/bedroom02.mp4' },
+    media: { type: 'video', src: 'bedroom02.mp4' },
     choices: [
       { question: 'Do you go to the bathroom?', object: 'hand soap', next: 'bathroom_enter' },
       { question: 'Do you go to the kitchen?', object: 'birthday cake', next: 'kitchen_enter' }
@@ -227,7 +227,7 @@ const nodes = {
   kitchen_enter: {
     path: 'taste',
     text: `You feel hungry. You open the fridge. Inside sits a birthday cake. The frosting is still perfectly smooth, bright, inviting. But for some reason you feel terribly nauseous.`,
-    media: { type: 'image', src: 'iCloud\Drive/candidacy/kitche_test02.png' },
+    media: { type: 'image', src: 'kitche_test02.png' },
     choices: [
       { question: 'Take a bite', object: 'birthday cake', next: 'taste_bite' },
       { question: 'Close the fridge', object: 'wait', next: 'taste_close' }
@@ -237,7 +237,7 @@ const nodes = {
   taste_bite: {
     path: 'taste',
     text: `You take a bite. The sweetness sends shivers down your spine. The taste feels familiar but unbearable. You have to spit it out. You need to get out. You need air.`,
-    media: { type: 'image', src: 'iCloud\Drive/candidacy/kitche_test02.png' },
+    media: { type: 'image', src: 'kitche_test02.png' },
     choices: [
       { question: 'Continue', object: null, next: 'hallway' }
     ]
@@ -246,7 +246,7 @@ const nodes = {
   taste_close: {
     path: 'taste',
     text: `You're about to shut the door, but something pulls you back. Before you realize what's happening, the cake is in your hands. You're already biting into it. The sweetness sends shivers down your spine. The taste feels familiar but unbearable. You have to spit it out. You need to get out. You need air.`,
-    media: { type: 'image', src: 'iCloud\Drive/candidacy/kitche_test02.png' },
+    media: { type: 'image', src: 'kitche_test02.png' },
     choices: [
       { question: 'Continue', object: null, next: 'hallway' }
     ]
@@ -256,7 +256,7 @@ const nodes = {
   look_at_time: {
     path: '',
     text: `You try to read the clock, but the time is indecipherable. The numbers are wrong. You go to the living room.`,
-    media: { type: 'video', src: 'iCloud\Drive/candidacy/bedroom_03.mp4' },
+    media: { type: 'video', src: 'bedroom_03.mp4' },
     choices: [
       { question: 'Do you sit down and watch TV?', object: 'tv remote', next: 'living_room_enter' },
       { question: 'It has been a long time since you talked to anyone. Would you like to pick up the phone?', object: 'phone', next: 'phone_enter' }
@@ -267,7 +267,7 @@ const nodes = {
   living_room_enter: {
     path: 'sight',
     text: `The images blur together. You can't make sense of what you're seeing. It makes you nauseous.`,
-    media: { type: 'image', src: 'iCloud\Drive/candidacy/livingroomtest2.png' },
+    media: { type: 'image', src: 'livingroomtest2.png' },
     choices: [
       { question: 'Turn it off', object: 'tv remote', next: 'sight_off' },
       { question: 'Leave it on', object: 'wait', next: 'sight_on' }
@@ -277,7 +277,7 @@ const nodes = {
   sight_off: {
     path: 'sight',
     text: `You don't have the strength to turn it off, to take the remote. The apartment feels tiny. The images burn into your retina. You feel dizzy. You need to get out. You need air.`,
-    media: { type: 'image', src: 'iCloud\Drive/candidacy/livingroomtest3.png' },
+    media: { type: 'image', src: 'livingroomtest3.png' },
     choices: [
       { question: 'Continue', object: null, next: 'hallway' }
     ]
@@ -286,7 +286,7 @@ const nodes = {
   sight_on: {
     path: 'sight',
     text: `You try to keep watching, to make sense of the images, but they blur faster. The apartment feels tiny. The images burn into your retina. You feel dizzy. You need to get out. You need air.`,
-    media: { type: 'image', src: 'iCloud\Drive/candidacy/livingroomtest3.png' },
+    media: { type: 'image', src: 'livingroomtest3.png' },
     choices: [
       { question: 'Continue', object: null, next: 'hallway' }
     ]
@@ -296,7 +296,7 @@ const nodes = {
   phone_enter: {
     path: 'hearing',
     text: `You only hear muffled sounds. Was there someone on the other side?`,
-     media: { type: 'image', src: 'iCloud\Drive/candidacy/livingroomtest2.png' },
+     media: { type: 'image', src: 'livingroomtest2.png' },
     choices: [
       { question: 'Try to understand', object: 'phone', next: 'hearing_listen' },
       { question: 'Hang up', object: 'wait', next: 'hearing_hangup' }
