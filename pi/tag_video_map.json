@@ -1,0 +1,16 @@
+{
+  "serial_port": "/dev/ttyACM0",
+  "baud_rate": 115200,
+  "read_timeout": 0.2,
+  "switch_cooldown_seconds": 1.0,
+  "media_root": "..",
+  "default_video": "bedroom01.mp4",
+  "player": {
+    "command": ["cvlc", "--fullscreen", "--loop", "{video}"]
+  },
+  "video_map": {
+    "04A1B2C3D4": "bedroom01.mp4",
+    "0499887766": "bedroom02.mp4",
+    "04FFEEDDCC": "bedroom03.mp4"
+  }
+}
